@@ -1,6 +1,9 @@
 pipeline {
 
   agent any
+  parameters {
+  	booleanParam(name: 'API_DISCOVERY', defaultValue: true, description: 'Indicator if API discovery is enabled')
+  }
   environment {
     //adding a comment for the commit test
     DEPLOY_CREDS = credentials('anypoint-creds')
@@ -14,7 +17,18 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-            sh 'mvn clean -DskipTests package'
+            //sh 'mvn clean -DskipTests package'
+            sh 'Build Done'
+            
+      }
+    }
+    
+    stage('API Discovery') {
+      if (param.API_DISCOVERY) {
+      	echo 'API Discovery ON'
+      }
+      else {
+      	echo 'API Discovery OFF'
       }
     }
 
@@ -25,8 +39,8 @@ pipeline {
         MULEENV = 'dev'
       }
       steps {
-            sh 'echo $DEPLOY_CREDS_USR'
-            sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
+            sh 'echo "Deploy Done"'
+            //sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
       }
     }
   }
