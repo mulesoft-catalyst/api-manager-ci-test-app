@@ -24,11 +24,16 @@ pipeline {
     }
     
     stage('API Discovery') {
-      if (param.API_DISCOVERY) {
-      	echo 'API Discovery ON'
-      }
-      else {
-      	echo 'API Discovery OFF'
+     steps {
+      	echo 'Evaluating API Discovery'
+        script {
+          if(params.API_DISCOVERY){
+            echo 'API Discovery is on'
+          }
+          else{
+            echo 'API Discovery is off'
+          }
+        }
       }
     }
 
