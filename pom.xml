@@ -29,6 +29,27 @@
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<cloudHubDeployment>
+						<uri>https://anypoint.mulesoft.com/</uri>
+						<muleVersion>${app.runtime}</muleVersion>
+						<applicationName>${cloudhub.app}</applicationName>
+						<username>${anypoint.username}</username>
+    					<password>${anypoint.password}</password>
+						<environment>${cloudhub.environment}</environment>
+						<region>${cloudhub.region}</region>
+						<workers>${cloudhub.workers}</workers>
+						<workerType>${cloudhub.workerType}</workerType>
+						<objectStoreV2>true</objectStoreV2>
+						<properties>
+							<mule.env>${mule.env}</mule.env>
+							<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
+							<anypoint.platform.client_secret>${anypoint.platform.client_secret}</anypoint.platform.client_secret>
+							<anypoint.platform.config.analytics.agent.enabled>true</anypoint.platform.config.analytics.agent.enabled>
+						</properties>
+					</cloudHubDeployment>
+					<classifier>mule-application</classifier>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
