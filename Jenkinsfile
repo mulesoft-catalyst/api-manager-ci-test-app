@@ -29,6 +29,7 @@ pipeline {
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
+            sh 'python3 api_get.py'
           }
           else{
             echo 'API Discovery is off'
