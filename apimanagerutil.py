@@ -8,13 +8,14 @@ def main():
     
     if sys.argv[1] == 'QT':
         
-        #message = {'api_id': apiid}
-        #print(message)    
+        message = {'api_id': apiid}
+        print(message)
         if sys.argv[7]:
             apiid = 123456
         else:
             apiid = 786475
-        print(apiid)    
+        #print(apiid)    
+        print(message)
         return 0
 
     operation_type = sys.argv[1]
@@ -23,6 +24,9 @@ def main():
     api_name = sys.argv[4]
     group_id = sys.argv[5]
     env = sys.argv[6]
+    version_overwrite = sys.argv[7]
+    major_version_overwrite = sys.argv[7]
+
 
     access_token = autheticate_with_anypoint_platform(username,password)
     
