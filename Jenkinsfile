@@ -3,6 +3,8 @@ pipeline {
   agent any
   parameters {
   	booleanParam(name: 'API_DISCOVERY', defaultValue: true, description: 'Indicator if API discovery is enabled')
+    booleanParam(name: 'API_OVERWRITE', defaultValue: true, description: 'Indicator if new instance need to be created after version change')
+    booleanParam(name: 'API_DISABLE_OVERWRITE_ON_MAJOR_VERSION', defaultValue: true, description: 'Indicator if new instance need to be created after major version change')
   }
   environment {
     //adding a comment for the commit test
@@ -13,6 +15,7 @@ pipeline {
     WORKER = '1'
     WORKERTYPE = 'MICRO'
     REGION = 'ap-southeast-2'
+    API_NAME = 'sample-api'
     
   }
   stages {
@@ -24,13 +27,22 @@ pipeline {
       }
     }
     
-    stage('API Discovery') {
-     steps {
+    
+
+    stage('Deploy DEV') {
+      environment {
+        ENVIRONMENT = 'DEV'
+        APP_NAME = 'sample-api-design-dev'
+        MULEENV = 'dev'
+      }
+      steps {
       	echo 'Evaluating API Discovery'
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            sh 'python3 apimanagerutil.py "QT" >> apiid'
+            echo '${env.GROUPID}'
+            echo '${env.DEV_ENVID}'
+            sh 'python3 apimanagerutil.py "QT" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${env.GROUPID}" "${env.DEV_ENVID}" >> apiid'
             sh 'cat apiid'
             //API_ID = '`python3 apimanagerutil.py "QT"`'
             sh 'echo $API_ID'
@@ -39,14 +51,6 @@ pipeline {
             echo 'API Discovery is off'
           }
         }
-      }
-    }
-
-     stage('Deploy DEV') {
-      environment {
-        ENVIRONMENT = 'DEV'
-        APP_NAME = 'sample-api-design-dev'
-        MULEENV = 'dev'
       }
       steps {
             sh 'echo $MVN_DEPLOY_CMD'
