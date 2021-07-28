@@ -6,10 +6,7 @@ import json
 
 def main():
     
-    if sys.argv[1] == 'QT':
-        print('123456')
-        return 0
-    
+    operation_type = sys.argv[1]
     username = sys.argv[2]
     password = sys.argv[3]
     api_name = sys.argv[4]
@@ -44,8 +41,6 @@ def fetch_exchange_details(access_token, group_id, api_name):
 
     
     url_exchange = "https://anypoint.mulesoft.com/exchange/api/v2/assets/" + group_id + "/" + api_name
-
-    
     
     with open('api-details-exchange.json') as f:
         data = json.load(f)
