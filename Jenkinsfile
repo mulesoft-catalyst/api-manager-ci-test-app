@@ -3,7 +3,7 @@ pipeline {
   agent any
   parameters {
   	booleanParam(name: 'API_DISCOVERY', defaultValue: true, description: 'Indicator if API discovery is enabled')
-    booleanParam(name: 'API_VERSION_OVERWRITE', defaultValue: true, description: 'Indicator if new instance need to be created after version change')
+    string(name: 'API_VERSION_OVERWRITE', defaultValue: 'Y', description: 'Indicator if new instance need to be created after version change')
     booleanParam(name: 'API_DISABLE_OVERWRITE_ON_MAJOR_VERSION', defaultValue: true, description: 'Indicator if new instance need to be created after major version change')
   }
   environment {
