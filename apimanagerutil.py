@@ -8,8 +8,9 @@ def main():
     
     if sys.argv[1] == 'QT':
         apiid = 123456
-        message = {'api_id': apiid}
-        print(message)    
+        #message = {'api_id': apiid}
+        #print(message)    
+        print(apiid)    
         return 0
 
     operation_type = sys.argv[1]
