@@ -40,9 +40,9 @@ pipeline {
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            echo '${env.GROUPID}'
-            echo '${env.DEV_ENVID}'
-            sh 'python3 apimanagerutil.py "QT" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${env.GROUPID}" "${env.DEV_ENVID}" >> apiid'
+            echo '${GROUPID}'
+            echo '${DEV_ENVID}'
+            sh 'python3 apimanagerutil.py "QT" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" >> apiid'
             sh 'cat apiid'
             //API_ID = '`python3 apimanagerutil.py "QT"`'
             sh 'echo $API_ID'
