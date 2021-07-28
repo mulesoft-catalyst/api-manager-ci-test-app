@@ -41,6 +41,9 @@ pipeline {
             echo 'API Discovery is on'
             def API_ID = sh (script: 'python3 apimanagerutil.py "QT" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" "${API_VERSION_OVERWRITE}"',  returnStdout: true)
             echo API_ID
+            def props = readJSON text: API_ID
+            def keyList = props['api_id']
+            echo keyList
             sh 'echo -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW" -Dapi.id=' + API_ID.api_id
           }
           else{
