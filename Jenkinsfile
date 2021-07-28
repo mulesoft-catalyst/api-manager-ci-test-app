@@ -1,3 +1,5 @@
+def MVN_DEPLOY_CMD = 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
+def API_ID
 pipeline {
 
   agent any
@@ -13,7 +15,7 @@ pipeline {
     WORKER = '1'
     WORKERTYPE = 'MICRO'
     REGION = 'ap-southeast-2'
-    MVN_DEPLOY_CMD = ''
+    
   }
   stages {
     stage('Build') {
@@ -30,8 +32,8 @@ pipeline {
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            sh 'TMP=$(python3 apimanagerutil.py "QT")'
-            sh 'echo "API ID = $TMP"'
+            sh 'API_ID=$(python3 apimanagerutil.py "QT")'
+            sh 'echo "API ID = ${API_ID}"'
           }
           else{
             echo 'API Discovery is off'
