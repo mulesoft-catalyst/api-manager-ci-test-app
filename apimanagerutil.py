@@ -7,7 +7,8 @@ import json
 def main():
     
     if sys.argv[1] == 'QT':
-        return 123456
+        print('123456')
+        return 0
     
     username = sys.argv[2]
     password = sys.argv[3]
