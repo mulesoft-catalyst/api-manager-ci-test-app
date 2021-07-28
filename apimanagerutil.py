@@ -12,7 +12,7 @@ def main():
         #print(message)    
         if sys.argv[7]:
             apiid = 123456
-        else
+        else:
             apiid = 786475
         print(apiid)    
         return 0
