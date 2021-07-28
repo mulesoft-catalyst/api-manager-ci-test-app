@@ -32,8 +32,8 @@ pipeline {
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            sh 'API_ID=$(python3 apimanagerutil.py "QT")'
-            sh 'echo "API ID = ${API_ID}"'
+            sh 'TMP=export `python3 apimanagerutil.py "QT"`'
+            sh 'echo "API ID = ${TMP}"'
           }
           else{
             echo 'API Discovery is off'
