@@ -7,9 +7,13 @@ import json
 def main():
     
     if sys.argv[1] == 'QT':
-        apiid = 123456
+        
         #message = {'api_id': apiid}
         #print(message)    
+        if sys.argv[7]:
+            apiid = 123456
+        else
+            apiid = 786475
         print(apiid)    
         return 0
 
