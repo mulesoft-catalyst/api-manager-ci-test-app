@@ -40,10 +40,7 @@ pipeline {
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            sh 'python3 apimanagerutil.py "QT" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" >> apiid.json'
-            sh 'cat apiid'
-            def api_props = readJSON file: 'apiid.json'
-            echo api_props.api_id
+            API_ID = sh ('python3 apimanagerutil.py "QT" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}"',  returnStdout: true)
             
           }
           else{
