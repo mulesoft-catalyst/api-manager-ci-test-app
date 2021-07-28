@@ -8,7 +8,6 @@ def main():
     
     if sys.argv[1] == 'QT':
         
-        print(message)
         if sys.argv[7]:
             apiid = 123456
         else:
