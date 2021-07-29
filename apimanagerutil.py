@@ -60,11 +60,12 @@ def main():
 
 
 def update_api_manager_version(access_token, group_id, env, api_id, new_version):    
+    
     url_update_apimanager = "https://anypoint.mulesoft.com/apimanager/api/v1/organizations/" + group_id \
             + "/environments/" + env + "/apis/" + api_id
-    headers={"authorization": "Bearer "+ access_token}
-    message = {'assetVersion':new_version}
-    response = requests.patch(url_update_apimanager,headers = headers,data = message)
+    headers={"authorization": "Bearer "+ access_token, 'Content-Type': 'application/json'}
+    message = {"assetVersion": new_version}
+    response = requests.patch(url_update_apimanager,headers = headers,data = json.dumps(message))
 
     if response.status_code != 200:
         #return 'ERROR Updating API manager'
