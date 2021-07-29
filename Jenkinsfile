@@ -49,21 +49,22 @@ pipeline {
             echo "${updateLater}"
             echo "${exchangeVersion}"
             // Deploying API in runtime manager
+            echo 'Deploying in Runtime'
             sh 'echo -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW" -Dapi.id=' + "${apiid}"
             
             if ("${updateLater}"){
+                echo 'Updating API version'
                 def UPDATE_STATUS = sh (script: 'python3 apimanagerutil.py "UPDATEVERSION" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" ' + "${apiid}" + ' ' + "${exchangeVersion}",  returnStdout: true)
                 echo UPDATE_STATUS
             }
             else {
               echo 'API Manager update is not required'
             }
-
-
-
+          
           }
           else{
             echo 'API Discovery is off'
+            sh 'echo -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
           }
         }
       }
