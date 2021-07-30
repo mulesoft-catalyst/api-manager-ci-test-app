@@ -36,23 +36,23 @@ def main():
                     ##### Exchange and API manager have same resource version, no need to update
                     needToUpdate = False
             else: 
-                print('Major version update')
+                ##### Major version update
                 apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
                 needToUpdate = False
 
-            if apiId == 0:
-                print('Major version update')
-                apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
-                needToUpdate = False
+            
+        
         elif version_overwrite == 'ALWAYS':
-            # Creating new API instance 
+            # Creating new API instance if exchange version is different from API manager
+            apiFoundFlag = False
             if apis != []:
                 for item in apis:
                     if item['assetVersion'] == exchange_api_version:
                         ##### Exchange and API manager have same resource version, no need to update
                         apiId = item['id']
+                        apiFoundFlag = True
                         break
-            else:
+            elif apis == [] or apiFoundFlag != True:
                 apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
             
             needToUpdate = False
