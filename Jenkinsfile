@@ -31,7 +31,6 @@ pipeline {
         APP_NAME = 'sample-api-design-dev'
         MULEENV = 'dev'
         API_VERSION_OVERWRITE = "NORMAL"
-        API_DISABLE_OVERWRITE_ON_MAJOR_VERSION = true
         //MVN_CMD = 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
       }
       steps {
@@ -39,12 +38,13 @@ pipeline {
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            def API_ID = sh (script: 'python3 apimanagerutil.py "GETID" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" "${API_VERSION_OVERWRITE}" "${API_DISABLE_OVERWRITE_ON_MAJOR_VERSION}"',  returnStdout: true)
+            def API_ID = sh (script: 'python3 apimanagerutil.py "GETID" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" "${API_VERSION_OVERWRITE}"',  returnStdout: true)
             echo API_ID
             def props = readJSON text: API_ID
             def apiid = props['api_id']
             def updateLater = props['updateVersion']
             def exchangeVersion = props['exchageVersion']
+            def access_token = props['access_token']
             echo "${apiid}"
             echo "${updateLater}"
             echo "${exchangeVersion}"
@@ -54,7 +54,7 @@ pipeline {
             
             if ("${updateLater}"){
                 echo 'Updating API version'
-                def UPDATE_STATUS = sh (script: 'python3 apimanagerutil.py "UPDATEVERSION" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" ' + "${apiid}" + ' ' + "${exchangeVersion}",  returnStdout: true)
+                def UPDATE_STATUS = sh (script: 'python3 apimanagerutil.py "UPDATEVERSION" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" ' + "${apiid}" + ' ' + "${exchangeVersion}" + ' ' + "${access_token}",  returnStdout: true)
                 echo UPDATE_STATUS
             }
             else {

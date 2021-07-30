@@ -15,16 +15,15 @@ def main():
     
 
 
-    access_token = autheticate_with_anypoint_platform(username,password)
+    #access_token = autheticate_with_anypoint_platform(username,password)
 
     if operation_type == 'GETID': # Getting API from api manager
-        
+        access_token = autheticate_with_anypoint_platform(username,password)
         version_overwrite = sys.argv[7]
-        major_version_overwrite = sys.argv[8]
         exchange_api_version, exchange_api_version_group = fetch_exchange_details(access_token, group_id, api_name)
         #exchange_api_version = '1.0.0'
         #exchange_api_version_group = 'v1'
-        apis = fetch_apimanager_details(access_token, group_id, env, api_name)
+        apis = fetch_apimanager_details(access_token, group_id, env, api_name,exchange_api_version_group)
         #print(apis)
         updateFlag = True
         apiId = 0
@@ -32,27 +31,38 @@ def main():
 
         if version_overwrite == 'NORMAL':
             if apis != []:
-                for item in apis:
-                    if item['productVersion'] == exchange_api_version_group and item['assetVersion'] > exchange_api_version:
-                        #print('Higher version found in API manager, Not updating')
-                        updateFlag = False
-                        break
-                    else:
-                        apiId = item['id']
+                apiId = apis[0]['id']
+                if apis[0]['assetVersion'] == exchange_api_version:
+                    ##### Exchange and API manager have same resource version, no need to update
+                    needToUpdate = False
             else: 
-                #print("New API")
+                print('Major version update')
                 apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
                 needToUpdate = False
 
             if apiId == 0:
-                #print('Major version update')
+                print('Major version update')
+                apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
                 needToUpdate = False
-        
-        message = {'api_id': apiId, 'updateVersion': needToUpdate, 'exchageVersion':exchange_api_version}
+        elif version_overwrite == 'ALWAYS':
+            # Creating new API instance 
+            if apis != []:
+                for item in apis:
+                    if item['assetVersion'] == exchange_api_version:
+                        ##### Exchange and API manager have same resource version, no need to update
+                        apiId = item['id']
+                        break
+            else:
+                apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
+            
+            needToUpdate = False
+
+        message = {'api_id': apiId, 'updateVersion': needToUpdate, 'exchageVersion':exchange_api_version, 'access_token': access_token}
     
     elif operation_type == 'UPDATEVERSION':
         apiId = sys.argv[7]
         newVersion = sys.argv[8]
+        access_token = sys.argv[9]
         message = update_api_manager_version(access_token, group_id, env, apiId, newVersion)
 
     print(message)
@@ -93,11 +103,11 @@ def update_api_manager_version(access_token, group_id, env, api_id, new_version)
 
 
 
-def fetch_apimanager_details(access_token, group_id, env, api_name):
+def fetch_apimanager_details(access_token, group_id, env, api_name, major_version):
 
     url_apimanager = "https://anypoint.mulesoft.com/apimanager/api/v1/organizations/" + group_id \
             + "/environments/" + env \
-            + "/apis?ascending=false&limit=20&offset=0&sort=createdDate" + "&assetId=" + api_name
+            + "/apis?ascending=false&limit=20&offset=0&sort=createdDate" + "&assetId=" + api_name + "&productVersion=" + major_version
     
     headers={"authorization": "Bearer "+ access_token}
     #print(headers)
