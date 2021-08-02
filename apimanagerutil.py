@@ -173,17 +173,17 @@ def autheticate_with_anypoint_platform(user, password):
     message = {'username':user,'password':password}
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
-    response = requests.post(url_login,headers = headers,data = json.dumps(message))
-    print(response.status_code)
+    #response = requests.post(url_login,headers = headers,data = json.dumps(message))
+    #print(response.status_code)
 
-    if response.status_code > 399:
+    #if response.status_code > 399:
         #print(response.status_code)
-        raise Exception('Error during Access token fetch')
+        #raise Exception('Error during Access token fetch')
 
-    access_token = response.json()['access_token']
+    #access_token = response.json()['access_token']
     #print(access_token)
 
-    return access_token
+    return "1c0e009b-37c0-4419-b7a2-080c33f69452"
 
 
 main()
