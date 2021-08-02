@@ -25,6 +25,9 @@ def main():
         version_overwrite = sys.argv[7]
 
         new_api_version = ''
+        new_api_version_group = ''
+
+
         exchange_api_version, exchange_api_version_group = fetch_exchange_details(access_token, group_id, api_name)
 
         ##### Compare file version with exchange version (if application)
@@ -33,16 +36,19 @@ def main():
                 file_data = json.load(f)
 
             file_api_version = file_data['apiSpecVersion']
+            file_api_version_group = file_data['apiSpecVersionGroup']
             if file_api_version > exchange_api_version:
                 ##### Compare file version with exchange version (if application)
                 raise Exception('Working version cannot be greater that Exchange version')
             else:
                 new_api_version = file_api_version
+                new_api_version_group = file_api_version_group
         
         else:
             new_api_version = exchange_api_version
+            new_api_version_group = exchange_api_version_group
 
-        apis = fetch_apimanager_details(access_token, group_id, env, api_name,exchange_api_version_group)
+        apis = fetch_apimanager_details(access_token, group_id, env, api_name, new_api_version_group)
         apiId = 0
         needToUpdate = True
 
@@ -173,17 +179,17 @@ def autheticate_with_anypoint_platform(user, password):
     message = {'username':user,'password':password}
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
-    #response = requests.post(url_login,headers = headers,data = json.dumps(message))
+    response = requests.post(url_login,headers = headers,data = json.dumps(message))
     #print(response.status_code)
 
-    #if response.status_code > 399:
-        #print(response.status_code)
-        #raise Exception('Error during Access token fetch')
+    if response.status_code > 399:
+        print(response.status_code)
+        raise Exception('Error during Access token fetch')
 
-    #access_token = response.json()['access_token']
+    access_token = response.json()['access_token']
     #print(access_token)
 
-    return "1c0e009b-37c0-4419-b7a2-080c33f69452"
+    return access_token
 
 
 main()
