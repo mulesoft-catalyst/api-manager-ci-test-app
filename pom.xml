@@ -43,6 +43,7 @@
 						<objectStoreV2>true</objectStoreV2>
 						<properties>
 							<mule.env>${mule.env}</mule.env>
+							<api.id>${api.id}</api.id>
 							<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
 							<anypoint.platform.client_secret>${anypoint.platform.client_secret}</anypoint.platform.client_secret>
 							<anypoint.platform.config.analytics.agent.enabled>true</anypoint.platform.config.analytics.agent.enabled>

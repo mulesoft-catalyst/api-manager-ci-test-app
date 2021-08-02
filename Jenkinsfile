@@ -14,13 +14,14 @@ pipeline {
     WORKERTYPE = 'MICRO'
     REGION = 'ap-southeast-2'
     API_NAME = 'sample-api'
-    APIID = 'X'
+    USE_CODE_API_VERSION = false
+    API_VERSION_FILENAME = ''
     
   }
   stages {
     stage('Build') {
       steps {
-            //sh 'mvn clean -DskipTests package'
+            sh 'mvn clean -DskipTests package'
             echo 'Build Done'
             
       }
@@ -28,29 +29,25 @@ pipeline {
     stage('Deploy DEV') {
       environment {
         ENVIRONMENT = 'DEV'
-        APP_NAME = 'sample-api-design-dev'
+        DEPLOY_APP_NAME = 'sample-api-design-dev'
         MULEENV = 'dev'
         API_VERSION_OVERWRITE = "NORMAL"
-        //MVN_CMD = 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
       }
       steps {
       	echo 'Evaluating API Discovery'
         script {
           if(params.API_DISCOVERY){
             echo 'API Discovery is on'
-            def API_ID = sh (script: 'python3 apimanagerutil.py "GETID" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" "${API_VERSION_OVERWRITE}"',  returnStdout: true)
+            def API_ID = sh (script: 'python3 apimanagerutil.py "GETID" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" "${API_VERSION_OVERWRITE}" "${USE_CODE_API_VERSION}" "${API_VERSION_FILENAME}"',  returnStdout: true)
             echo API_ID
             def props = readJSON text: API_ID
             def apiid = props['api_id']
             def updateLater = props['updateVersion']
             def exchangeVersion = props['exchageVersion']
             def access_token = props['access_token']
-            echo "${apiid}"
-            echo "${updateLater}"
-            echo "${exchangeVersion}"
             // Deploying API in runtime manager
             echo 'Deploying in Runtime'
-            sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW" -Dapi.id=' + "${apiid}"
+            sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$DEPLOY_APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW" -Dapi.id=' + "${apiid}"
             
             if ("${updateLater}"){
                 echo 'Updating API version'
@@ -64,7 +61,7 @@ pipeline {
           }
           else{
             echo 'API Discovery is off'
-            sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
+            sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$DEPLOY_APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW"'
           }
         }
       }
