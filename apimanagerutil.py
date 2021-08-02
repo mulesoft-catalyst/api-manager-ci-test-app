@@ -13,31 +13,49 @@ def main():
     group_id = sys.argv[5]
     env = sys.argv[6]
     
+    file_flag = sys.argv[8]
 
-
-    #access_token = autheticate_with_anypoint_platform(username,password)
+    file_api_version = ''
+    
+    
+    
 
     if operation_type == 'GETID': # Getting API from api manager
         access_token = autheticate_with_anypoint_platform(username,password)
         version_overwrite = sys.argv[7]
+
+        new_api_version = ''
         exchange_api_version, exchange_api_version_group = fetch_exchange_details(access_token, group_id, api_name)
-        #exchange_api_version = '1.0.0'
-        #exchange_api_version_group = 'v1'
+
+        ##### Compare file version with exchange version (if application)
+        if file_flag:
+            with open(sys.argv[9]) as f:
+                file_data = json.load(f)
+
+            file_api_version = file_data['apiSpecVersion']
+            if file_api_version > exchange_api_version:
+                ##### Compare file version with exchange version (if application)
+                raise Exception('Working version cannot be greater that Exchange version')
+            else:
+                new_api_version = file_api_version
+        
+        else:
+            new_api_version = exchange_api_version
+
         apis = fetch_apimanager_details(access_token, group_id, env, api_name,exchange_api_version_group)
-        #print(apis)
-        updateFlag = True
         apiId = 0
         needToUpdate = True
 
         if version_overwrite == 'NORMAL':
             if apis != []:
                 apiId = apis[0]['id']
-                if apis[0]['assetVersion'] == exchange_api_version:
-                    ##### Exchange and API manager have same resource version, no need to update
+                if apis[0]['assetVersion'] == new_api_version or apis[0]['assetVersion'] > new_api_version:
+                    ##### Working API and API manager have same resource version, no need to update
+                    ##### OR Working API version is lower than API manager version, no need to update
                     needToUpdate = False
             else: 
                 ##### Major version update
-                apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
+                apiId = add_api_manager(access_token, group_id, env, api_name, new_api_version)
                 needToUpdate = False
 
             
@@ -47,17 +65,17 @@ def main():
             apiFoundFlag = False
             if apis != []:
                 for item in apis:
-                    if item['assetVersion'] == exchange_api_version:
+                    if item['assetVersion'] == new_api_version:
                         ##### Exchange and API manager have same resource version, no need to update
                         apiId = item['id']
                         apiFoundFlag = True
                         break
             elif apis == [] or apiFoundFlag != True:
-                apiId = add_api_manager(access_token, group_id, env, api_name, exchange_api_version)
+                apiId = add_api_manager(access_token, group_id, env, api_name, new_api_version)
             
             needToUpdate = False
 
-        message = {'api_id': apiId, 'updateVersion': needToUpdate, 'exchageVersion':exchange_api_version, 'access_token': access_token}
+        message = {'api_id': apiId, 'updateVersion': needToUpdate, 'exchageVersion':new_api_version, 'access_token': access_token}
     
     elif operation_type == 'UPDATEVERSION':
         apiId = sys.argv[7]
@@ -112,8 +130,7 @@ def fetch_apimanager_details(access_token, group_id, env, api_name, major_versio
     headers={"authorization": "Bearer "+ access_token}
     #print(headers)
     response = requests.get(url_apimanager,headers = headers)
-    #with open('/Users/mainul.islam/Documents/personal/tools/python/api-details-apimanager.json') as f:
-        #data = json.load(f)
+    
     
     if response.status_code != 200:
         #print(response.status_code)
