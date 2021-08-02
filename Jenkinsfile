@@ -40,7 +40,7 @@ pipeline {
             echo 'API Discovery is on'
             def API_ID = sh (script: 'python3 apimanagerutil.py "GETID" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" "${API_VERSION_OVERWRITE}" "${USE_CODE_API_VERSION}" "${API_VERSION_FILENAME}"',  returnStdout: true)
             echo API_ID
-            def props = readJSON text: API_ID
+            def props = readJSON text: API_ID.trim()
             def apiid = props['api_id']
             def updateLater = props['updateVersion']
             def exchangeVersion = props['exchageVersion']
