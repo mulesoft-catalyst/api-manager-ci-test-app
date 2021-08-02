@@ -28,7 +28,7 @@ def main():
         exchange_api_version, exchange_api_version_group = fetch_exchange_details(access_token, group_id, api_name)
 
         ##### Compare file version with exchange version (if application)
-        if file_flag:
+        if file_flag == 'TRUE':
             with open(sys.argv[9]) as f:
                 file_data = json.load(f)
 
