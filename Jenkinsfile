@@ -49,7 +49,7 @@ pipeline {
             echo 'Deploying in Runtime'
             sh 'mvn -DskipTests deploy -DmuleDeploy -Dmule.version="$MULE_VERSION" -Danypoint.username="$DEPLOY_CREDS_USR" -Danypoint.password="$DEPLOY_CREDS_PSW" -Dcloudhub.app="$DEPLOY_APP_NAME" -Dcloudhub.environment="$ENVIRONMENT" -Dcloudhub.bg="$BG" -Dcloudhub.worker="$WORKER" -Dcloudhub.workerType="$WORKERTYPE" -Dmule.env="$MULEENV" -Dcloudhub.region="$REGION" -Danypoint.platform.client_id="$PLATFORM_CREDS_USR" -Danypoint.platform.client_secret="$PLATFORM_CREDS_PSW" -Dapi.id=' + "${apiid}"
             
-            if ("${updateLater}"){
+            if ("${updateLater}" == 'True'){
                 echo 'Updating API version'
                 def UPDATE_STATUS = sh (script: 'python3 apimanagerutil.py "UPDATEVERSION" "$DEPLOY_CREDS_USR" "$DEPLOY_CREDS_PSW" "$API_NAME" "${GROUPID}" "${DEV_ENVID}" ' + "${apiid}" + ' ' + "${exchangeVersion}" + ' ' + "${access_token}",  returnStdout: true)
                 echo UPDATE_STATUS
