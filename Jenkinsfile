@@ -14,7 +14,7 @@ pipeline {
     WORKERTYPE = 'MICRO'
     REGION = 'ap-southeast-2'
     API_NAME = 'sample-api'
-    USE_CODE_API_VERSION = false
+    USE_CODE_API_VERSION = "FALSE"
     API_VERSION_FILENAME = ''
     
   }
