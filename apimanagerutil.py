@@ -75,7 +75,7 @@ def main():
             
             needToUpdate = False
 
-        message = {'api_id': apiId, 'updateVersion': str(needToUpdate), 'exchageVersion':new_api_version, 'access_token': access_token}
+        message = {"api_id": apiId, "updateVersion": str(needToUpdate), "exchageVersion": new_api_version, "access_token": access_token}
     
     elif operation_type == 'UPDATEVERSION':
         apiId = sys.argv[7]
