@@ -76,7 +76,7 @@ def main():
                         apiId = item['id']
                         apiFoundFlag = True
                         break
-            elif apis == [] or apiFoundFlag != True:
+            if apis == [] or apiFoundFlag != True:
                 apiId = add_api_manager(access_token, group_id, env, api_name, new_api_version)
             
             needToUpdate = False
